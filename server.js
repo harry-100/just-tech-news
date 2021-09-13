@@ -16,6 +16,6 @@ app.use(routes);
 // turn on connection to db and server
 // sync() connects sequelize to the database
 // force: true would make sequelize drop and re-create all of the database tables every time on start
-sequelize.sync({ force: true}).then(() => {
+sequelize.sync({ force: false}).then(() => {
     app.listen(PORT, () => console.log('Now listening'));
 });
