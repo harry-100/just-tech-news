@@ -6,6 +6,34 @@ class Comment extends Model {}
 Comment.init(
     {
         // columns will go here
+        id: {
+            type: DataTypes.INTEGER,
+            autoIncrement: true,
+            primaryKey: true,
+        },
+        comment_text: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            validate: {
+                notEmpty: true,
+            }
+        },
+        user_id: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            references: {
+                model: 'user',
+                key: 'id'
+            }
+        },
+        post_id: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            references: {
+                user: 'post',
+                key: 'id'
+            }
+        }
     },
     {
         sequelize,
@@ -14,3 +42,4 @@ Comment.init(
         modelName: 'comment'
     }
 );
+module.exports = Comment;
