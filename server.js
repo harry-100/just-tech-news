@@ -4,18 +4,25 @@ const routes = require('./routes');
 const sequelize = require('./config/connection');
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3002;
 
-// middleware
 app.use(express.json());
-app.use(express.urlencoded({extended: true}));
+app.use(express.urlencoded({ extended: true }));
 
 // turn on routes
 app.use(routes);
 
 // turn on connection to db and server
-// sync() connects sequelize to the database
-// force: true would make sequelize drop and re-create all of the database tables every time on start
-sequelize.sync({ force: false}).then(() => {
-    app.listen(PORT, () => console.log('Now listening'));
+/* foreign key constraint failure occurs when trying to drop a table
+with foreign key. the workaround is to disable foreign key check before dropping the
+table and then re-enable it after dropping and creating the tables */
+sequelize.query('SET FOREIGN_KEY_CHECKS = 0')
+.then(function(){
+    sequelize.sync({ force: false }).then(() => {
+        app.listen(PORT, () => console.log('Now listening'));
+        sequelize.query('SET FOREIGN_KEY_CHECKS = 1');
+      });
 });
+/* sequelize.sync({ force: true }).then(() => {
+  app.listen(PORT, () => console.log('Now listening'));
+}); */
